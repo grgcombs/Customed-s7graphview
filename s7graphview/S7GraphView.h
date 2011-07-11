@@ -43,6 +43,10 @@
 
 @required
 
+- (NSString *)graphView:(S7GraphView *)graphView nameForPlot:(NSInteger)plotIndex;
+
+- (NSDictionary *)graphViewMinAndMaxY:(S7GraphView *)graphView;
+
 /** 
  * Returns the number of plots your want to be rendered in the view.
  * 
@@ -99,6 +103,8 @@
   */
 - (BOOL)graphView:(S7GraphView *)graphView shouldFillPlot:(NSUInteger)plotIndex;
 
+- (UIColor *)graphView:(S7GraphView *)graphView colorForPlot:(NSUInteger)plotIndex;
+
 @end
 @protocol S7GraphViewDelegate
 
@@ -139,9 +145,14 @@
 	BOOL _drawInfo;
 	NSString *_info;
 	UIColor *_infoColor;
-    
+
+	UIColor *_highlightColor;
+
     NSString *_xUnit;
     NSString *_yUnit;
+	
+	CGFloat minY;
+	CGFloat maxY;
 }
 
 /** Returns a different color for the first 10 plots. */
@@ -164,6 +175,7 @@
 @property (nonatomic, retain) UIColor *gridXColor;
 @property (nonatomic, retain) UIColor *gridYColor;
 
+@property (nonatomic, retain) UIColor *highlightColor;
 @property (nonatomic, assign) BOOL drawInfo;
 @property (nonatomic, copy) NSString *info;
 @property (nonatomic, retain) UIColor *infoColor;
