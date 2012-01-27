@@ -234,21 +234,7 @@
 - (void)drawRect:(CGRect)rect {
 	
 	CGContextRef c = UIGraphicsGetCurrentContext();
-	
-	// Add clipping path
-	// * Runs around the perimeter of the included area
-	// * Dimensions are *not* (further) reduced, as path is a zero-thickness boundary
-	// * A path is created "forInset" 1:
-	//   . When one rounded corner is placed inside another, the interior
-	//     corner must have its radius reduced for a proper appearance
-	//rect = CGRectMake(rect.origin.x, rect.origin.y, 
-	//							 rect.size.width-2, rect.size.height-2);
-	
-	//[self setPathToRoundedRect:rect forInset:1 inContext:c];
-	CGContextSetFillColorWithColor(c, self.backgroundColor.CGColor);
-	CGContextFillRect(c, rect);
-	//CGContextClip(c);
-	
+		
 	NSUInteger numberOfPlots = [self.dataSource graphViewNumberOfPlots:self];
 	
 	if (!numberOfPlots) {
@@ -344,7 +330,7 @@
 	}
 	
 	
-	NSUInteger maxStep;
+	NSUInteger maxStep = 0;
 	
 	NSArray *xValues = [self.dataSource graphViewXValues:self];
 	NSUInteger xValuesCount = xValues.count;
@@ -452,24 +438,17 @@
 			shouldFill = [self.dataSource graphView:self shouldFillPlot:plotIndex];
 		}
 		
-		CGColorRef plotColor;
+		CGColorRef plotColor = nil;
 		if ([self.dataSource respondsToSelector:@selector(graphView:colorForPlot:)])
 			plotColor = [self.dataSource graphView:self colorForPlot:plotIndex].CGColor;
 		else
 			plotColor = [S7GraphView colorByIndex:plotIndex].CGColor;
-        int numberDataCount = 0;
-        for (NSUInteger valueIndex = 0; valueIndex < values.count; valueIndex++) {
-            if ([@"NSCFNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])] 
-				|| [@"NSNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])]) {
-                numberDataCount++;
-            }
-        }
+        int numberDataCount = values.count;
 		CGFloat elipsisSize = 6.f;
 
 		if (numberDataCount == 1) {
 			for (NSUInteger valueIndex = 0; valueIndex < values.count; valueIndex++) {
 				
-				if ([@"NSCFNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])] || [@"NSNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])]) {
 					if ([[values objectAtIndex:valueIndex] floatValue] == CGFLOAT_MIN)
 						continue;
 					NSUInteger x = valueIndex * stepX;
@@ -481,13 +460,11 @@
 					CGContextAddEllipseInRect(c, elipsisRect);
 					CGContextSetFillColorWithColor(c, plotColor);
 					CGContextFillEllipseInRect(c, elipsisRect);
-				}
 			}
 		}
 		
 		if (numberDataCount >= 2) {
             for (NSUInteger valueIndex = 0; valueIndex < values.count - 1; valueIndex++) {
-                if ([@"NSCFNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])] || [@"NSNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex] class])]) {
 					if ([[values objectAtIndex:valueIndex] floatValue] == CGFLOAT_MIN)
 						continue;
 					
@@ -505,22 +482,11 @@
 					CGContextFillEllipseInRect(c, elipsisRect);
 					
 					BOOL skipNext = NO;
-                    if ([@"NSCFNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex + 1] class])] || [@"NSNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:valueIndex + 1] class])]) {
 						CGFloat nextVal = [[values objectAtIndex:valueIndex+1] floatValue];
 						x = (valueIndex + 1) * stepX;
 						y = (nextVal - minY) * stepY;
 						endPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY); 
 						skipNext = (nextVal == CGFLOAT_MIN || nextVal == 0.0f);
-					} else {
-                        for (NSUInteger idx = valueIndex+1; idx < values.count; idx++) {
-                            if ([@"NSCFNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:idx] class])] || [@"NSNumber" isEqualToString:NSStringFromClass([[values objectAtIndex:idx] class])]) {
-                                x = idx * stepX;
-                                y = ([[values objectAtIndex:idx] floatValue] - minY) * stepY;
-                                endPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY);
-                                break;
-                            }
-                        }
-                    }
 										
                     CGContextMoveToPoint(c, startPoint.x, startPoint.y);
 
@@ -550,7 +516,7 @@
 						CGContextSetFillColorWithColor(c, plotColor);
 						CGContextFillEllipseInRect(c, elipsisRect);	
 					}
-                }
+                
             }
         }
 	}
@@ -707,16 +673,6 @@
 	
 	_highlightColor = [[UIColor colorWithWhite:0.9f alpha:0.2f] retain];
 	
-	/*
-	 self.layer.shadowOffset = CGSizeMake(0, -1);
-	self.layer.shadowColor = [[UIColor grayColor] CGColor];
-	self.layer.shadowRadius = 5;
-	self.layer.shadowOpacity = 1.f;//.25;
-	
-	CGRect shadowFrame = self.layer.bounds;
-	CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:shadowFrame].CGPath;
-	self.layer.shadowPath = shadowPath;
-	*/
 	self.layer.cornerRadius = 10.f;
 	self.layer.masksToBounds = YES;
 	
