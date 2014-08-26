@@ -94,7 +94,7 @@
 	UIColor * shadow = RGB( 50, 50, 50);
 	CGContextSetShadowWithColor(c, offset, 2, shadow.CGColor);
 	[valueString drawInRect:displayBar withFont:[TexLegeTheme boldTen]
-			  lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
+			  lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentCenter];
 	CGContextSetShadowWithColor(c, offset, 0, NULL);
 	//NSLog(@"%@ - %f", valueString,[valueString sizeWithFont:_detailFont].width);
 	CGContextSetFillColorWithColor(c, [TexLegeTheme textLight].CGColor);
@@ -296,7 +296,7 @@
 			CGRect valueStringRect = CGRectMake(0.0f, rect.size.height - y - offsetY, 50.0f, 20.0f);
 			
 			[valueString drawInRect:valueStringRect withFont:font
-					  lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentRight];
+					  lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
             
             //Add unit-y.
             if (i == numSteps) {
@@ -323,7 +323,7 @@
 					CGContextRestoreGState(theContext);//create the path using our points array
 
                    // [_yUnit drawInRect:textRect withFont:font
-				   //    lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
+				   //    lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentCenter];
                 }
             }
 		}
@@ -405,7 +405,7 @@
 			
 			[self.xValuesColor set];
 			[valueString drawInRect:CGRectMake(x, rect.size.height - 20.0f, 120.0f, 20.0f) withFont:font
-					  lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
+					  lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentCenter];
             
             //Add a button which has clear background.
             UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(x+50, offsetY, 20.0f, rect.size.height-offsetY)];
@@ -419,7 +419,7 @@
             if (i == maxStep-1) {
                 if (_xUnit) {
                     [_xUnit drawInRect:CGRectMake(x+25, rect.size.height - 20.0f, 120.0f, 20.0f) withFont:font
-                              lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
+                              lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentCenter];
                 }
             }
 		}
@@ -443,7 +443,7 @@
 			plotColor = [self.dataSource graphView:self colorForPlot:plotIndex].CGColor;
 		else
 			plotColor = [S7GraphView colorByIndex:plotIndex].CGColor;
-        int numberDataCount = values.count;
+        NSUInteger numberDataCount = values.count;
 		CGFloat elipsisSize = 6.f;
 
 		if (numberDataCount == 1) {
@@ -526,7 +526,7 @@
 		font = [TexLegeTheme boldFourteen];
 		[self.infoColor set];
 		[_info drawInRect:CGRectMake(0.0f, 5.0f, rect.size.width, 20.0f) withFont:font
-			lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
+			lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentCenter];
 	}	
 }
 
