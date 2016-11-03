@@ -50,7 +50,7 @@
 
 @implementation LabelThingy
 @synthesize labelText, labelColor;
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
 	if ((self=[super initWithFrame:frame])) {
 		self.backgroundColor = [UIColor clearColor];
 		self.tag = ChartLabelID;
@@ -159,7 +159,7 @@
 @synthesize xUnit = _xUnit, yUnit = _yUnit;
 @synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
 	
     if ((self = [super initWithFrame:frame])) {
 		[self initializeComponent];
@@ -168,7 +168,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder {
+- (instancetype)initWithCoder:(NSCoder *)decoder {
 	
 	if ((self = [super initWithCoder:decoder])) {
 		[self initializeComponent];
@@ -243,8 +243,8 @@
 	
 	NSDictionary *minmax = [self.dataSource graphViewMinAndMaxY:self];
 	if (minmax) {
-		minY = [[minmax objectForKey:@"minY"] floatValue];
-		maxY = [[minmax objectForKey:@"maxY"] floatValue];
+		minY = [minmax[@"minY"] floatValue];
+		maxY = [minmax[@"maxY"] floatValue];
 	}
 
 	CGFloat offsetX = _drawAxisY ? 60.0f : 10.0f;
@@ -283,13 +283,13 @@
 		
 		if (_drawAxisY) {
 			
-			NSNumber *valueToFormat = [NSNumber numberWithFloat:value];
+			NSNumber *valueToFormat = @(value);
 			NSString *valueString;
 			
 			if (_yValuesFormatter) {
 				valueString = [_yValuesFormatter stringForObjectValue:valueToFormat];
 			} else {
-				valueString = [valueToFormat stringValue];
+				valueString = valueToFormat.stringValue;
 			}
 			
 			[self.yValuesColor set];
@@ -316,10 +316,10 @@
 					CGContextSetFillColorWithColor (theContext, self.yValuesColor.CGColor);
 					myTextTransform =  CGAffineTransformMakeRotation  (90.f*(M_PI / 180.f));
 					CGContextSetTextMatrix (theContext, myTextTransform); // 9
-					const char *titleString = [self.yUnit UTF8String];
+					const char *titleString = (self.yUnit).UTF8String;
 					
 					CGContextShowTextAtPoint (theContext, 20.f, (rect.size.height/2) - 35.f, 
-											  titleString, [self.yUnit length]); // 10
+											  titleString, (self.yUnit).length); // 10
 					CGContextRestoreGState(theContext);//create the path using our points array
 
                    // [_yUnit drawInRect:textRect withFont:font
@@ -394,7 +394,7 @@
 		
 		if (_drawAxisX) {
 			
-			id valueToFormat = [xValues objectAtIndex:index];
+			id valueToFormat = xValues[index];
 			NSString *valueString;
 			
 			if (_xValuesFormatter) {
@@ -409,8 +409,8 @@
             
             //Add a button which has clear background.
             UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(x+50, offsetY, 20.0f, rect.size.height-offsetY)];
-            [button setBackgroundColor:[UIColor clearColor]];
-            [button setTag:i];
+            button.backgroundColor = [UIColor clearColor];
+            button.tag = i;
             [button addTarget:self action:@selector(xAxisWasTapped:) forControlEvents:UIControlEventTouchDown];
             [self addSubview:button];
             [button release];
@@ -449,10 +449,10 @@
 		if (numberDataCount == 1) {
 			for (NSUInteger valueIndex = 0; valueIndex < values.count; valueIndex++) {
 				
-					if ([[values objectAtIndex:valueIndex] floatValue] == CGFLOAT_MIN)
+					if ([values[valueIndex] floatValue] == CGFLOAT_MIN)
 						continue;
 					NSUInteger x = valueIndex * stepX;
-					CGFloat y = ([[values objectAtIndex:valueIndex] floatValue] - minY) * stepY;
+					CGFloat y = ([values[valueIndex] floatValue] - minY) * stepY;
 					
 					CGPoint startPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY);					
 					CGRect elipsisRect = CGRectMake(startPoint.x-(elipsisSize/2), startPoint.y-(elipsisSize/2), elipsisSize, elipsisSize);
@@ -465,11 +465,11 @@
 		
 		if (numberDataCount >= 2) {
             for (NSUInteger valueIndex = 0; valueIndex < values.count - 1; valueIndex++) {
-					if ([[values objectAtIndex:valueIndex] floatValue] == CGFLOAT_MIN)
+					if ([values[valueIndex] floatValue] == CGFLOAT_MIN)
 						continue;
 					
 					NSUInteger x = valueIndex * stepX;
-                    CGFloat y = ([[values objectAtIndex:valueIndex] floatValue] - minY) * stepY;
+                    CGFloat y = ([values[valueIndex] floatValue] - minY) * stepY;
                     
                     CGContextSetLineWidth(c, 2.f);
                     
@@ -482,7 +482,7 @@
 					CGContextFillEllipseInRect(c, elipsisRect);
 					
 					BOOL skipNext = NO;
-						CGFloat nextVal = [[values objectAtIndex:valueIndex+1] floatValue];
+						CGFloat nextVal = [values[valueIndex+1] floatValue];
 						x = (valueIndex + 1) * stepX;
 						y = (nextVal - minY) * stepY;
 						endPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY); 
@@ -531,7 +531,7 @@
 }
 
 - (void)xAxisWasTapped:(UIButton *)sendor{
-    NSArray *allOfSubviews = [self subviews];
+    NSArray *allOfSubviews = self.subviews;
     for (UIView *view in allOfSubviews) {
         if ([view isKindOfClass:[UIButton class]]) {
             if (view.backgroundColor != _highlightColor) {
@@ -540,7 +540,7 @@
                 [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
                 [UIView setAnimationDuration:0.3f];
                 
-                [view setBackgroundColor:[UIColor clearColor]];
+                view.backgroundColor = [UIColor clearColor];
                 
                 [UIView commitAnimations];
             }
@@ -552,47 +552,47 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGRect rect = sendor.frame;
 	
-    [sendor setBounds:CGRectMake(rect.origin.x/2, rect.origin.y/2, 0, 0)];
+    sendor.bounds = CGRectMake(rect.origin.x/2, rect.origin.y/2, 0, 0);
     [UIView beginAnimations:nil context:context];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationDuration:0.5f];
     
-    [sendor setBackgroundColor:_highlightColor];
-    [sendor setBounds:rect];
+    sendor.backgroundColor = _highlightColor;
+    sendor.bounds = rect;
 	
-	NSNumber *repV = [[self.dataSource graphView:self yValuesForPlot:0] objectAtIndex:sendor.tag];
-	NSNumber *memV = [[self.dataSource graphView:self yValuesForPlot:1] objectAtIndex:sendor.tag];
-	NSNumber *demV = [[self.dataSource graphView:self yValuesForPlot:2] objectAtIndex:sendor.tag];
+	NSNumber *repV = [self.dataSource graphView:self yValuesForPlot:0][sendor.tag];
+	NSNumber *memV = [self.dataSource graphView:self yValuesForPlot:1][sendor.tag];
+	NSNumber *demV = [self.dataSource graphView:self yValuesForPlot:2][sendor.tag];
 
 	NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [numberFormatter setMinimumFractionDigits:1];
-    [numberFormatter setMaximumFractionDigits:1];
+    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    numberFormatter.minimumFractionDigits = 1;
+    numberFormatter.maximumFractionDigits = 1;
 	
 	
 	NSDictionary *repub = [[NSDictionary alloc] initWithObjectsAndKeys:
-						   [NSNumber numberWithInteger:0], @"plotIndex",
+						   @0, @"plotIndex",
 						   [TexLegeTheme texasRed], @"color",
 						   [numberFormatter stringFromNumber:repV], @"valueString",
 						   nil];
 	
 	NSDictionary *member = [[NSDictionary alloc] initWithObjectsAndKeys:
-							[NSNumber numberWithInteger:1], @"plotIndex",
+							@1, @"plotIndex",
 							[TexLegeTheme accent], @"color",
 							[numberFormatter stringFromNumber:memV], @"valueString",
 							nil];
 	
 	NSDictionary *dem = [[NSDictionary alloc] initWithObjectsAndKeys:
-							[NSNumber numberWithInteger:2], @"plotIndex",
+							@2, @"plotIndex",
 							[TexLegeTheme texasBlue], @"color",
 							[numberFormatter stringFromNumber:demV], @"valueString",
 							nil];
 
 	NSArray *order = nil;
 	// set the visual order of the labels
-	if ([memV floatValue] > [repV floatValue])
+	if (memV.floatValue > repV.floatValue)
 		order = [[NSArray alloc] initWithObjects:member, repub, dem, nil];
-	else if ([memV floatValue] < [demV floatValue])
+	else if (memV.floatValue < demV.floatValue)
 		order = [[NSArray alloc] initWithObjects:repub, dem, member, nil];
 	else
 		order = [[NSArray alloc] initWithObjects:repub, member, dem, nil];
@@ -611,16 +611,16 @@
 		
 	NSInteger index = 1;
 	for (NSDictionary *dict in order) {
-		NSInteger plotIndex = [[dict objectForKey:@"plotIndex"] integerValue];
+		NSInteger plotIndex = [dict[@"plotIndex"] integerValue];
 		NSString *labelString = [NSString stringWithFormat:@"%@: %@",
 								 [self.dataSource graphView:self nameForPlot:plotIndex], 
-								 [dict objectForKey:@"valueString"]];
+								 dict[@"valueString"]];
 		CGSize stringSize = [labelString sizeWithFont:[TexLegeTheme boldTen]];
 
 		CGRect labelRect = CGRectMake(xShift, step*index,stringSize.width+30.f,stringSize.height+15.f); 
 		LabelThingy *newLabel = [[LabelThingy alloc] initWithFrame:labelRect];
 		newLabel.labelText = labelString;
-		newLabel.labelColor = [dict objectForKey:@"color"];
+		newLabel.labelColor = dict[@"color"];
 		[self addSubview:newLabel];
 		[newLabel release];
 		index++;
@@ -639,7 +639,7 @@
 
 - (void)reloadData {
 	//remove buttons displayed.
-    NSArray *allOfSubviews = [self subviews];
+    NSArray *allOfSubviews = self.subviews;
     for (UIView *view in allOfSubviews) {
         if ([view isKindOfClass:[UIButton class]]) {
             [view removeFromSuperview];
