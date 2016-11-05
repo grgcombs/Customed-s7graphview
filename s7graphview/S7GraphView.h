@@ -125,8 +125,8 @@
 	
 @private
 	
-	id<S7GraphViewDataSource> _dataSource;
-    id<S7GraphViewDelegate>delegate;
+	id<S7GraphViewDataSource> __weak _dataSource;
+    id<S7GraphViewDelegate>__weak delegate;
 	
 	NSFormatter *_xValuesFormatter;
 	NSFormatter *_yValuesFormatter;
@@ -158,30 +158,30 @@
 /** Returns a different color for the first 10 plots. */
 + (UIColor *)colorByIndex:(NSInteger)index;
 
-@property (nonatomic, assign) IBOutlet id<S7GraphViewDataSource> dataSource;
-@property (nonatomic, assign) IBOutlet id<S7GraphViewDelegate> delegate;
+@property (nonatomic, weak) IBOutlet id<S7GraphViewDataSource> dataSource;
+@property (nonatomic, weak) IBOutlet id<S7GraphViewDelegate> delegate;
 
-@property (nonatomic, retain) IBOutlet NSFormatter *xValuesFormatter;
-@property (nonatomic, retain) IBOutlet NSFormatter *yValuesFormatter;
+@property (nonatomic, strong) IBOutlet NSFormatter *xValuesFormatter;
+@property (nonatomic, strong) IBOutlet NSFormatter *yValuesFormatter;
 
 @property (nonatomic, assign) BOOL drawAxisX;
 @property (nonatomic, assign) BOOL drawAxisY;
 @property (nonatomic, assign) BOOL drawGridX;
 @property (nonatomic, assign) BOOL drawGridY;
 
-@property (nonatomic, retain) UIColor *xValuesColor;
-@property (nonatomic, retain) UIColor *yValuesColor;
+@property (nonatomic, strong) UIColor *xValuesColor;
+@property (nonatomic, strong) UIColor *yValuesColor;
 
-@property (nonatomic, retain) UIColor *gridXColor;
-@property (nonatomic, retain) UIColor *gridYColor;
+@property (nonatomic, strong) UIColor *gridXColor;
+@property (nonatomic, strong) UIColor *gridYColor;
 
-@property (nonatomic, retain) UIColor *highlightColor;
+@property (nonatomic, strong) UIColor *highlightColor;
 @property (nonatomic, assign) BOOL drawInfo;
 @property (nonatomic, copy) NSString *info;
-@property (nonatomic, retain) UIColor *infoColor;
+@property (nonatomic, strong) UIColor *infoColor;
 
-@property (nonatomic, retain) NSString *xUnit;
-@property (nonatomic, retain) NSString *yUnit;
+@property (nonatomic, strong) NSString *xUnit;
+@property (nonatomic, strong) NSString *yUnit;
 
 - (void)reloadData;
 

@@ -40,16 +40,15 @@
 
 #define ChartLabelID 62552
 
-@interface LabelThingy : UIView {
-	
-}
-@property (nonatomic,retain) NSString *labelText;
-@property (nonatomic,retain) UIColor *labelColor;
+@interface LabelThingy : UIView
+
+@property (nonatomic,strong) NSString *labelText;
+@property (nonatomic,strong) UIColor *labelColor;
 
 @end
 
 @implementation LabelThingy
-@synthesize labelText, labelColor;
+
 - (instancetype)initWithFrame:(CGRect)frame {
 	if ((self=[super initWithFrame:frame])) {
 		self.backgroundColor = [UIColor clearColor];
@@ -58,15 +57,11 @@
 	return self;
 }
 
-- (void)dealloc {
-	self.labelText = nil;
-	[super dealloc];
-}
 
 - (void) displayBarBox: (CGSize) stringSize offsetY: (CGFloat) offsetY displayX: (CGFloat) displayX c: (CGContextRef) c valueString: (NSString *) valueString color:(UIColor *)currentColor {
 	// Build the rounded rectangle box for the display
 	
-	CGRect displayBar;
+	CGRect displayBar = CGRectZero;
 	CGPoint topLeftCorner = CGPointMake(displayX, offsetY-stringSize.height);
 	CGPoint bottomLeftCorner = CGPointMake(topLeftCorner.x, topLeftCorner.y+([TexLegeTheme boldTen].pointSize+5.0));
 	CGPoint topRightCorner = CGPointMake(topLeftCorner.x+stringSize.width+5.0, topLeftCorner.y);
@@ -177,25 +172,10 @@
 	return self;
 }
 
-- (void)dealloc {
-	
-	nice_release(_xValuesFormatter);
-	nice_release(_yValuesFormatter);
-	
-	nice_release(_xValuesColor);
-	nice_release(_yValuesColor);
-	
-	nice_release(_gridXColor);
-	nice_release(_gridYColor);
-	
-	nice_release(_info);
-	nice_release(_infoColor);
-    
-    nice_release(_xUnit);
-    nice_release(_yUnit);
-	
-	nice_release(_highlightColor);
-	[super dealloc];
+- (void)dealloc
+{
+    self.delegate = nil;
+
 }
 
 - (void)setPathToRoundedRect:(CGRect)rect forInset:(NSUInteger)inset inContext:(CGContextRef)context
@@ -413,7 +393,6 @@
             button.tag = i;
             [button addTarget:self action:@selector(xAxisWasTapped:) forControlEvents:UIControlEventTouchDown];
             [self addSubview:button];
-            [button release];
             
             //Add unit-x.
             if (i == maxStep-1) {
@@ -622,15 +601,9 @@
 		newLabel.labelText = labelString;
 		newLabel.labelColor = dict[@"color"];
 		[self addSubview:newLabel];
-		[newLabel release];
 		index++;
 		
 	}
-	[numberFormatter release];
-	[member release];
-	[repub release];
-	[dem release];
-	[order release];
 		
     [UIView commitAnimations];
     
@@ -662,16 +635,16 @@
 	_drawGridX = YES;
 	_drawGridY = YES;
 	
-	_xValuesColor = [[UIColor blackColor] retain];
-	_yValuesColor = [[UIColor blackColor] retain];
+	_xValuesColor = [UIColor blackColor];
+	_yValuesColor = [UIColor blackColor];
 	
-	_gridXColor = [[UIColor blackColor] retain];
-	_gridYColor = [[UIColor blackColor] retain];
+	_gridXColor = [UIColor blackColor];
+	_gridYColor = [UIColor blackColor];
 	
 	_drawInfo = NO;
-	_infoColor = [[UIColor blackColor] retain];
+	_infoColor = [UIColor blackColor];
 	
-	_highlightColor = [[UIColor colorWithWhite:0.9f alpha:0.2f] retain];
+	_highlightColor = [UIColor colorWithWhite:0.9f alpha:0.2f];
 	
 	self.layer.cornerRadius = 10.f;
 	self.layer.masksToBounds = YES;
