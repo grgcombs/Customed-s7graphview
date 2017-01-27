@@ -211,8 +211,10 @@
 	CGContextClosePath(context);					// End at TDC
 }
 
-- (void)drawRect:(CGRect)rect {
-	
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+
 	CGContextRef c = UIGraphicsGetCurrentContext();
 		
 	NSUInteger numberOfPlots = [self.dataSource graphViewNumberOfPlots:self];
@@ -622,6 +624,8 @@
     }
     
 	[self setNeedsDisplay];
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
 }
 
 #pragma mark PrivateMethods
