@@ -328,7 +328,8 @@
 			}
 		}
 		
-		step = xValuesCount / stepCount;
+        if (stepCount > 0)
+            step = xValuesCount / stepCount;
 		maxStep = stepCount + 1;
 		
 	} else {
@@ -337,7 +338,10 @@
 		maxStep = xValuesCount;
 	}
 	
-	CGFloat stepX = (rect.size.width - (offsetX * 2)) / (xValuesCount - 1);
+    NSInteger countDivisor = (xValuesCount - 1);
+    if (countDivisor == 0)
+        countDivisor = 1;
+	CGFloat stepX = (rect.size.width - (offsetX * 2)) / countDivisor;
 	
 	for (NSUInteger i = 0; i < maxStep; i++) {
 		
@@ -406,7 +410,10 @@
 		}
 	}
 	
-	stepX = (rect.size.width - (offsetX * 2)) / (xValuesCount - 1);
+    NSInteger divisor = (xValuesCount - 1);
+    if (divisor == 0)
+        divisor = 1;
+	stepX = (rect.size.width - (offsetX * 2)) / divisor;
 	
 	CGContextSetLineDash(c, 0, NULL, 0);
 	
