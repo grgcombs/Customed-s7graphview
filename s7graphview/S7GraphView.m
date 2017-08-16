@@ -452,29 +452,29 @@
 		}
 		
 		if (numberDataCount >= 2) {
-            for (NSUInteger valueIndex = 0; valueIndex < values.count - 1; valueIndex++) {
+            for (NSUInteger valueIndex = 0; valueIndex < values.count - 1; valueIndex++)
+            {
 					if ([values[valueIndex] floatValue] == CGFLOAT_MIN)
 						continue;
 					
-					NSUInteger x = valueIndex * stepX;
-                    CGFloat y = ([values[valueIndex] floatValue] - minY) * stepY;
+					UInt32 x = (UInt32)roundl(valueIndex * stepX);
+                    UInt32 y = (UInt32)roundl(([values[valueIndex] floatValue] - minY) * stepY);
                     
                     CGContextSetLineWidth(c, 2.f);
                     
                     CGPoint startPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY);
-                    CGPoint endPoint = {CGFLOAT_MIN,CGFLOAT_MIN};
-					
+
 					CGRect elipsisRect = CGRectMake(startPoint.x-(elipsisSize/2), startPoint.y-(elipsisSize/2), elipsisSize, elipsisSize);
 					CGContextAddEllipseInRect(c, elipsisRect);
 					CGContextSetFillColorWithColor(c, plotColor);
 					CGContextFillEllipseInRect(c, elipsisRect);
 					
 					BOOL skipNext = NO;
-						CGFloat nextVal = [values[valueIndex+1] floatValue];
-						x = (valueIndex + 1) * stepX;
-						y = (nextVal - minY) * stepY;
-						endPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY); 
-						skipNext = (nextVal == CGFLOAT_MIN || nextVal == 0.0f);
+                    CGFloat nextVal = [values[valueIndex+1] floatValue];
+                    x = (UInt32)roundl((valueIndex + 1) * stepX);
+                    y = (UInt32)roundl((nextVal - minY) * stepY);
+                    CGPoint endPoint = CGPointMake(x + offsetX, rect.size.height - y - offsetY);
+                    skipNext = (nextVal == CGFLOAT_MIN || nextVal == 0.0f);
 										
                     CGContextMoveToPoint(c, startPoint.x, startPoint.y);
 
@@ -518,7 +518,7 @@
 	}	
 }
 
-- (void)xAxisWasTapped:(UIButton *)sendor{
+- (void)xAxisWasTapped:(UIButton *)sender{
     NSArray *allOfSubviews = self.subviews;
     for (UIView *view in allOfSubviews) {
         if ([view isKindOfClass:[UIButton class]]) {
@@ -538,19 +538,20 @@
     }
 		
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGRect rect = sendor.frame;
+    CGRect rect = sender.frame;
 	
-    sendor.bounds = CGRectMake(rect.origin.x/2, rect.origin.y/2, 0, 0);
+    sender.bounds = CGRectMake(rect.origin.x/2, rect.origin.y/2, 0, 0);
     [UIView beginAnimations:nil context:context];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationDuration:0.5f];
     
-    sendor.backgroundColor = _highlightColor;
-    sendor.bounds = rect;
-	
-	NSNumber *repV = [self.dataSource graphView:self yValuesForPlot:0][sendor.tag];
-	NSNumber *memV = [self.dataSource graphView:self yValuesForPlot:1][sendor.tag];
-	NSNumber *demV = [self.dataSource graphView:self yValuesForPlot:2][sendor.tag];
+    sender.backgroundColor = _highlightColor;
+    sender.bounds = rect;
+
+    UInt32 tagIndex = (UInt32)sender.tag;
+	NSNumber *repV = [self.dataSource graphView:self yValuesForPlot:0][tagIndex];
+	NSNumber *memV = [self.dataSource graphView:self yValuesForPlot:1][tagIndex];
+	NSNumber *demV = [self.dataSource graphView:self yValuesForPlot:2][tagIndex];
 
 	NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
@@ -591,9 +592,9 @@
 	CGFloat step = (height / 3)-15.f;
 	
 	// this shifts the labels to the left or right side, in we're touching too close to the edge of the chart
-	CGFloat xShift = sendor.frame.origin.x+10.f;
+	CGFloat xShift = sender.frame.origin.x+10.f;
 	NSInteger lastIndex = [self.dataSource graphViewMaximumNumberOfXaxisValues:self] - 1;
-	if (sendor.tag > 0 && sendor.tag >= lastIndex)
+	if (sender.tag > 0 && sender.tag >= lastIndex)
 		xShift = xShift-90.f;
 	
 		
@@ -616,7 +617,7 @@
 		
     [UIView commitAnimations];
     
-    [self.delegate graphView:self indexOfTappedXaxis:sendor.tag];
+    [self.delegate graphView:self indexOfTappedXaxis:sender.tag];
 }
 
 - (void)reloadData {
